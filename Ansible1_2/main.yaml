@@ -82,7 +82,12 @@
       notify: restart nginx
 
     - name: ensure ssl_private_dir exists
-      file: path={{ self_signed_cert.private_path }} state=directory
+      file:
+        path: "{{ self_signed_cert.private_path }}"
+        state: directory
+        owner: root
+        group: root
+        mode: 0600        
 
     - name: generate an OpenSSL private key
       vars:
@@ -92,8 +97,13 @@
         size: 2048
         force: no
 
-    - name: ensure ssl_csr_dir exists
-      file: path={{ self_signed_cert.csr_path }} state=directory
+    - name: ensure ensure ssl_csr_dir exists
+      file:
+        path: "{{ self_signed_cert.csr_path }}"
+        state: directory
+        owner: root
+        group: root
+        mode: 0644
 
     - name: generate an OpenSSL Certificate Signing Request
       vars:
@@ -102,9 +112,6 @@
         path: "{{ self_signed_cert.csr_path }}/{{ self_signed_cert.name }}.csr"
         privatekey_path: "{{ self_signed_cert.private_path }}/{{ self_signed_cert.name }}.pem"
     
-    - name: ensure ssl_certs_dir exists
-      file: path={{ self_signed_cert.csr_path }} state=directory 
-
     - name: generate a Self Signed OpenSSL certificate
       vars:
         ansible_python_interpreter: /usr/bin/python3
