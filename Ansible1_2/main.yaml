@@ -5,7 +5,11 @@
   become: true
   vars:
     nginx_port: 443
-    ssl_dir: /etc/ssl
+    self_signed_cert:
+      private_path: /etc/ssl/private
+      certs_path: /etc/ssl/certs
+      csr_path: /etc/ssl/csr
+      name: nginx-selfsigned
   tasks:
     - name: create nginx repo definition
       copy:
@@ -21,6 +25,35 @@
         update_cache: true
         state: present
 
+    - name: install python-setuptools
+      yum:
+        name: python-setuptools
+        update_cache: true
+        state: present
+
+    - name: install python3
+      yum:
+        name: python3
+        update_cache: true
+        state: present
+
+    - name: install libselinux-python3
+      yum: 
+        name: libselinux-python3
+        update_cache: true
+        state: present
+
+    - name: upgrade pip
+      pip:
+        name: pip
+        executable: pip3
+        extra_args: --upgrade
+
+    - name: install cryptography
+      pip:
+        executable: pip3
+        name: cryptography
+
     - name: copy main nginx config file
       copy:
         src: files/nginx.conf
@@ -33,7 +66,7 @@
     - name: copy site's nginx config file
       template:
         src: templates/nginx.conf.j2
-        dest: /etc/nginx/conf.d/notls.conf
+        dest: /etc/nginx/conf.d/nginx_tls.conf
         owner: root
         group: root
         mode: 0644
@@ -48,35 +81,38 @@
         mode: 0644
       notify: restart nginx
 
-    - name: copy dhparam.pem
-      copy:
-        src: files/dhparam.pem
-        dest: /etc/nginx/dhparam.pem
-        owner: root
-        group: root
-        mode: 0644
-      notify: restart nginx
+    - name: ensure ssl_private_dir exists
+      file: path={{ self_signed_cert.private_path }} state=directory
 
-    - name: ensures ssl_dir exists
-      file: path={{ ssl_dir }}/ state=directory
+    - name: generate an OpenSSL private key
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+      community.crypto.openssl_privatekey:
+        path: "{{ self_signed_cert.private_path }}/{{ self_signed_cert.name }}.pem"
+        size: 2048
+        force: no
 
-    - name: copy nginx-selfsigned.crt
-      copy:
-        src: files/nginx-selfsigned.crt
-        dest: "{{ ssl_dir }}/nginx-selfsigned.crt"
-        owner: root
-        group: root
-        mode: 0644
-      notify: restart nginx
+    - name: ensure ssl_csr_dir exists
+      file: path={{ self_signed_cert.csr_path }} state=directory
 
-    - name: copy nginx-selfsigned.key
-      copy:
-        src: files/nginx-selfsigned.key
-        dest: "{{ ssl_dir }}/nginx-selfsigned.key"
-        owner: root
-        group: root
-        mode: 0700
-      notify: restart nginx
+    - name: generate an OpenSSL Certificate Signing Request
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+      community.crypto.openssl_csr:
+        path: "{{ self_signed_cert.csr_path }}/{{ self_signed_cert.name }}.csr"
+        privatekey_path: "{{ self_signed_cert.private_path }}/{{ self_signed_cert.name }}.pem"
+    
+    - name: ensure ssl_certs_dir exists
+      file: path={{ self_signed_cert.csr_path }} state=directory 
+
+    - name: generate a Self Signed OpenSSL certificate
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+      community.crypto.x509_certificate:
+        path: "{{ self_signed_cert.certs_path }}/{{ self_signed_cert.name }}.crt"
+        privatekey_path: "{{ self_signed_cert.private_path }}/{{ self_signed_cert.name }}.pem"
+        csr_path: "{{ self_signed_cert.csr_path }}/{{ self_signed_cert.name }}.csr"
+        provider: selfsigned
 
     - name: ensure nginx is enabled and started
       service:
