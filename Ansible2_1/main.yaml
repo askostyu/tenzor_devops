@@ -1,0 +1,19 @@
+---
+- name: adding users to remote host
+  hosts: nodes
+  gather_facts: true
+  become: true
+  vars_files:
+    - files/secrets.yaml
+  tasks:
+    - name: add users
+      ansible.builtin.user:
+        name: "{{ user.username }}"
+        password: "{{ user.password | password_hash('sha512') }}"
+        comment: Ansible-generated user
+        state: present
+      loop: "{{ credentials }}"
+      loop_control:
+        loop_var: user
+        pause: 5
+      no_log: true

@@ -1,0 +1,4 @@
+ansible-playbook main.yaml --ask-vault-pass
+
+vault_pass: ansible
+
