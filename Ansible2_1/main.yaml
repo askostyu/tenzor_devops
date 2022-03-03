@@ -4,7 +4,7 @@
   gather_facts: true
   become: true
   vars_files:
-    - files/secrets.yaml
+    - vars/secrets.yaml
   tasks:
     - name: add users
       ansible.builtin.user:
