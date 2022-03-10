@@ -1,0 +1,5 @@
+---
+
+- name: deploy_mariadb
+  debug:
+    msg: "Deploing mariadb"

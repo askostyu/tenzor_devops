@@ -1,0 +1,46 @@
+---
+- name: include_role tasks
+  hosts: localhost
+  connection: local
+  vars: 
+    test_part: test
+  # pre_tasks:
+  #   - name: set fact
+  #     set_fact:
+  #       test_part: test
+  tasks:
+    - name: task before role
+      debug:
+        msg: "This task executes before roles' tasks"
+
+    - name: ssl_gen
+      import_role:
+        name: ssl_gen
+      vars: 
+        custom_var: 42
+      tags:
+        - nginx
+        - ssl_gen
+        - never
+
+    - name: deploy_nginx
+      import_role:
+        name: deploy_nginx
+      vars: 
+        custom_var: 42
+      tags:
+        - nginx
+        - never
+
+    - name: deploy_mariadb
+      import_role:
+        name: deploy_mariadb
+      vars: 
+        custom_var: 42
+      tags:
+        - mariadb
+        - never
+
+    - name: task after role
+      debug:
+        msg: "This task executes after roles' tasks" 

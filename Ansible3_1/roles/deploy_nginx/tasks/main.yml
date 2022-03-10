@@ -1,0 +1,5 @@
+---
+
+- name: deploy_nginx
+  debug:
+    msg: "Deploing Nginx"
