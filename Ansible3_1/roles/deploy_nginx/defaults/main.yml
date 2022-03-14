@@ -1,2 +1,5 @@
 ---
-# defaults file for deploy_nginx
+ssl_private_path: /etc/ssl/private
+ssl_cert_path: /etc/ssl/certs
+ssl_cert_name: selfsigned
+nginx_port: 443

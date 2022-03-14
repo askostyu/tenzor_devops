@@ -1,5 +1,63 @@
 ---
+- name: install python3
+  yum:
+    name: "{{ package }}"
+    update_cache: true
+    state: present
+  loop_control:
+    loop_var: package
+  loop:
+    - python-setuptools
+    - python3
+    - libselinux-python3
 
-- name: ssl_gen
-  debug:
-    msg: "Generating SSL"
+- name: upgrade pip
+  pip:
+    name: pip
+    executable: pip3
+    extra_args: --upgrade
+
+- name: install cryptography
+  pip:
+    executable: pip3
+    name: cryptography
+
+- name: ensure ssl_private_dir exists
+  file:
+    path: "{{ ssl_private_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0600        
+
+- name: generate an OpenSSL private key
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  community.crypto.openssl_privatekey:
+    path: "{{ ssl_private_path }}/{{ ssl_cert_name }}.pem"
+    size: 2048
+    force: no
+
+- name: ensure ensure ssl_csr_dir exists
+  file:
+    path: "{{ ssl_csr_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0644
+
+- name: generate an OpenSSL Certificate Signing Request
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  community.crypto.openssl_csr:
+    path: "{{ ssl_csr_path }}/{{ ssl_cert_name }}.csr"
+    privatekey_path: "{{ ssl_private_path }}/{{ ssl_cert_name }}.pem"
+
+- name: generate a Self Signed OpenSSL certificate
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  community.crypto.x509_certificate:
+    path: "{{ ssl_cert_path }}/{{ ssl_cert_name }}.crt"
+    privatekey_path: "{{ ssl_private_path }}/{{ ssl_cert_name }}.pem"
+    csr_path: "{{ ssl_csr_path }}/{{ ssl_cert_name }}.csr"
+    provider: selfsigned

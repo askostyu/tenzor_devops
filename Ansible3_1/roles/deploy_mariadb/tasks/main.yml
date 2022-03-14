@@ -1,5 +1,36 @@
 ---
+- name: install 'mariadb-server' and 'MySQL-python' packages
+  yum:
+    name: "{{ package }}"
+    state: present
+  loop:
+    - mariadb-server
+    - MySQL-python
+  loop_control:
+    loop_var: package
 
-- name: deploy_mariadb
-  debug:
-    msg: "Deploing mariadb"
+- name: insert firewalld rule for "{{ mysql_port }}"/tcp port
+  firewalld:
+    port: "{{ mysql_port }}/tcp"
+    permanent: true
+    state: enabled
+    immediate: true
+  ignore_errors: true
+
+- name: ensure 'mariadb' service is started and enabled
+  service:
+    name: mariadb
+    state: started
+    enabled: true
+
+- name: create "{{ db_name }}" database
+  mysql_db:
+    name: "{{ db_name }}"
+    state: present
+
+- name: create database user "{{ db_user }}" and "{{ db_name }}".*:ALL privelege
+  mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_pass }}"
+    priv: "{{ db_name }}.*:ALL"
+  no_log: true

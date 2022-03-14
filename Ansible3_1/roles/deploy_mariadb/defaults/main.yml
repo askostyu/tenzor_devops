@@ -1,2 +1,5 @@
 ---
-# defaults file for deploy_mariadb
+mysql_port: 3306
+db_user: ansible_user
+db_pass: ansible_pass
+db_name: ansible_db
