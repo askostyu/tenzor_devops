@@ -1,25 +1,27 @@
 ---
 - name: install php-fpm packages and wordpress
+  hosts: nodes
+  become: true
 
   tasks:
-    - name: ssl_gen
-      import_role:
-        name: ssl_gen
-      tags:
-        - nginx
-        - ssl_gen
+    #- name: ssl_gen
+    #  import_role:
+    #    name: ssl_gen
+    #  tags:
+    #    - nginx
+    #    - ssl_gen
 
-    - name: deploy_nginx
-      import_role:
-        name: deploy_nginx
-      tags:
-        - nginx
+    #- name: deploy_nginx
+    #  import_role:
+    #    name: deploy_nginx
+    #  tags:
+    #    - nginx
 
-    - name: deploy_mariadb
-      import_role:
-        name: deploy_mariadb
-      tags:
-        - mariadb
+    #- name: deploy_mariadb
+    #  import_role:
+    #    name: deploy_mariadb
+    #  tags:
+    #    - mariadb
     
     - name: deploy_php
       import_role:

@@ -31,15 +31,6 @@
     mode: 0644
   notify: restart nginx
 
-#- name: copy index.html
-#  template:
-#    src: templates/index.html.j2
-#    dest: /usr/share/nginx/html/index.html
-#    owner: root
-#    group: root
-#    mode: 0644
-#  notify: restart nginx
-
 - name: ensure nginx is enabled and started
   service:
     name: nginx
@@ -48,17 +39,13 @@
 
 - name: insert firewalld rule for nginx
   firewalld:
-    port: "{{ nginx_port }}/tcp"
+    port: "{{ port }}/tcp"
     permanent: true
     state: enabled
     immediate: true
+  loop_control:
+    loop_var: port
+  loop:
+    - "{{ nginx_tls_port }}"
+    - "{{ nginx_no_tls_port }}"
   ignore_errors: true
-
-- name: check web site from control server
-  uri:
-    url: "https://{{ ansible_host }}:{{ nginx_port }}"
-    validate_certs: false
-    return_content: true
-  connection: local
-  register: example_webpage_out
-  failed_when: example_webpage_out.status != 200

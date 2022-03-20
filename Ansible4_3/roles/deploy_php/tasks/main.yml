@@ -1,13 +1,13 @@
 ---
 - name: Put repo files to /etc/yum.repos.d/ directory
   copy:
-    src: {{ filename }}
+    src: "{{ filename }}"
     dest: /etc/yum.repos.d/
     owner: root
     group: root
     mode: 0644
   with_fileglob:
-    - "/files/*.repo"
+    - "*.repo"
   loop_control:
     loop_var: filename
 
@@ -18,4 +18,4 @@
     state: present
   loop_control:
     loop_var: package
-  loop: php_packages_list
+  loop: "{{ php_packages_list }}"
