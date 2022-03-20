@@ -22,12 +22,6 @@
     dest: "/srv/wordpress-{{ wp_version }}.tar.gz"
     checksum: "{{ wp_checksum }}"
 
-- name: Unarchive wordpress to /srv folder
-  unarchive:
-    src: "/srv/wordpress-{{ wp_version }}.tar.gz"
-    dest: /srv
-    remote_src: true
-
 - name: Add linux group "wordpress"
   group:
     name: wordpress
@@ -53,14 +47,22 @@
     priv: "{{ wp_db_name }}.*:ALL"
   no_log: true
 
+- name: Unarchive wordpress to /srv folder
+  unarchive:
+    src: "/srv/wordpress-{{ wp_version }}.tar.gz"
+    dest: /srv
+    owner: wordpress
+    group: wordpress
+    remote_src: true
+
 - name: >
     Copy WordPress config file from templates
     to /srv/wordpress/wp-config.php
   template:
     src: templates/wp-config.php.j2
     dest: /srv/wordpress/wp-config.php
-    owner: root
-    group: root
+    owner: wordpress
+    group: wordpress
     mode: 0644
   notify: restart php-fpm
 
