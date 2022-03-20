@@ -1,0 +1,36 @@
+---
+- name: install 'mariadb-server' and 'MySQL-python' packages
+  yum:
+    name: "{{ package }}"
+    state: present
+  loop:
+    - mariadb-server
+    - MySQL-python
+  loop_control:
+    loop_var: package
+
+- name: insert firewalld rule for "{{ mysql_port }}"/tcp port
+  firewalld:
+    port: "{{ mysql_port }}/tcp"
+    permanent: true
+    state: enabled
+    immediate: true
+  ignore_errors: true
+
+- name: ensure 'mariadb' service is started and enabled
+  service:
+    name: mariadb
+    state: started
+    enabled: true
+
+- name: Create mariadb database for wordpress
+  mysql_db:
+    name: "{{ wp_db_name }}"
+    state: present
+
+- name: Create WordPress database user
+  mysql_user:
+    name: "{{ wp_db_user }}"
+    password: "{{ wp_db_password }}"
+    priv: "{{ wp_db_name }}.*:ALL"
+  no_log: true

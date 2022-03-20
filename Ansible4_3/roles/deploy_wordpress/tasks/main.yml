@@ -1,0 +1,29 @@
+---
+- name: >
+    Download WordPress from http://wordpress.org/wordpress-{{ wp_version }}.tar.gz
+    to /srv/ folder + checksum
+  get_url:
+
+- name: Unarchive wordpress to /srv folder
+  unarchive:
+
+- name: Add linux group "wordpress"
+  group:
+
+- name: >
+    Add linux user "wordpress" with group "wordpress"
+    and /srv/wordpress as homedir
+  user:
+
+- name: >
+    Copy WordPress config file from templates
+    to /srv/wordpress/wp-config.php
+
+- name: >
+    /srv/wordpress directory recursive rights
+    for wordpress user and group
+  file:
+
+- name: Start php-fpm Service
+
+#Handler

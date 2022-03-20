@@ -1,0 +1,8 @@
+---
+- name: Put repo files to /etc/yum.repos.d/ directory
+
+- name: Install packages from 'php_packages_list'
+
+- name: Remove default /etc/php-fpm.d/www.conf file
+
+- name: Copy wordpress.conf from files to /etc/php-fpm.d/wordpress.conf

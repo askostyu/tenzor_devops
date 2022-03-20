@@ -1,0 +1,6 @@
+---
+# settings for database connection
+wp_db_name: wordpress_db
+wp_db_user: wordpress_user
+wp_db_password: wordpress_password
+mysql_port: 3306

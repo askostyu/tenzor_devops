@@ -1,0 +1,5 @@
+---
+ssl_private_path: /etc/ssl/private
+ssl_cert_path: /etc/ssl/certs
+ssl_csr_path: /etc/ssl/csr
+ssl_cert_name: selfsigned

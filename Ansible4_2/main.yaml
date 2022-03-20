@@ -9,7 +9,7 @@
       connection: local
       healthcheck_py:
         addr: "ya.ru"
-        tls: true
+        tls: false
       register: py_result
     
     - name: print py_result
