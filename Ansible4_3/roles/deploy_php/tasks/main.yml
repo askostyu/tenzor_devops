@@ -1,8 +1,21 @@
 ---
 - name: Put repo files to /etc/yum.repos.d/ directory
+  copy:
+    src: {{ filename }}
+    dest: /etc/yum.repos.d/
+    owner: root
+    group: root
+    mode: 0644
+  with_fileglob:
+    - "/files/*.repo"
+  loop_control:
+    loop_var: filename
 
 - name: Install packages from 'php_packages_list'
-
-- name: Remove default /etc/php-fpm.d/www.conf file
-
-- name: Copy wordpress.conf from files to /etc/php-fpm.d/wordpress.conf
+  yum:
+    name: "{{ package }}"
+    update_cache: true
+    state: present
+  loop_control:
+    loop_var: package
+  loop: php_packages_list
