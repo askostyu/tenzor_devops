@@ -1,5 +1,4 @@
 ---
-
 - name: Remove default /etc/php-fpm.d/www.conf file
   file:
     path: /etc/php-fpm.d/www.conf
@@ -27,7 +26,7 @@
   unarchive:
     src: "/srv/wordpress-{{ wp_version }}.tar.gz"
     dest: /srv
-    remote_src: yes
+    remote_src: true
 
 - name: Add linux group "wordpress"
   group:
@@ -71,9 +70,9 @@
   file:
     path: /srv/wordpress
     state: directory
-    recurse: yes
+    recurse: true
     owner: wordpress
-    group: wordpress    
+    group: wordpress
 
 - name: Start php-fpm Service
   service:

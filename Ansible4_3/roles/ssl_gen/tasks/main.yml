@@ -28,7 +28,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0600        
+    mode: 0600
 
 - name: generate an OpenSSL private key
   vars:
@@ -36,7 +36,7 @@
   community.crypto.openssl_privatekey:
     path: "{{ ssl_private_path }}/{{ ssl_cert_name }}.pem"
     size: 2048
-    force: no
+    force: false
 
 - name: ensure ensure ssl_csr_dir exists
   file:

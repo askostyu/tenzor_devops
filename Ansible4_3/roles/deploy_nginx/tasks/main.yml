@@ -22,6 +22,11 @@
     mode: 0644
   notify: restart nginx
 
+- name: Remove nginx default config file
+  file:
+    path: /etc/nginx/conf.d/default.conf
+    state: absent
+
 - name: copy site's nginx config file
   template:
     src: templates/nginx-wordpress.conf.j2
@@ -48,4 +53,4 @@
   loop:
     - "{{ nginx_tls_port }}"
     - "{{ nginx_no_tls_port }}"
-  ignore_errors: true
+  failed_when: false

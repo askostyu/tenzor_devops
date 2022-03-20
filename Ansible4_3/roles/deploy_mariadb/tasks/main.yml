@@ -15,7 +15,7 @@
     permanent: true
     state: enabled
     immediate: true
-  ignore_errors: true
+  failed_when: false
 
 - name: ensure 'mariadb' service is started and enabled
   service:
