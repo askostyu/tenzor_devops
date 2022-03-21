@@ -1,6 +1,9 @@
 ---
 - name: Check site's availability
   hosts: nodes
+  vars:
+    addr: "y1a.ru"
+    tls: false
   gather_facts: false
   tasks:
     - name: healthcheck_py
@@ -8,10 +11,21 @@
         ansible_python_interpreter: /usr/bin/python3
       connection: local
       healthcheck_py:
-        addr: "ya.ru"
-        tls: false
+        addr: "{{ addr }}"
+        tls: "{{ tls }}"
       register: py_result
-    
+
     - name: print py_result
       debug:
         msg: "{{ py_result }}"
+
+    - name: healthcheck_sh
+      connection: local
+      healthcheck_sh:
+        addr: "{{ addr }}"
+        tls: "{{ tls }}"
+      register: sh_result
+
+    - name: print sh_result
+      debug:
+        msg: "{{ sh_result }}"

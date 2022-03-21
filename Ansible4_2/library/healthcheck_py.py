@@ -61,23 +61,20 @@ rc:
 '''
 
 def check_web_server(addr, tls):
-    site_status="Unavailable"
     msg=""
     rc = None
-
     if tls:
         url = f"https://{addr}"
     else:
         url = f"http://{addr}"
-    
     try:
-        response = requests.get(url)
+        response = requests.get(url, allow_redirects=False)
     except Exception as ex:
         msg = str(ex)
+        site_status="Unavailable"
     else:
+        site_status="Available"
         rc = response.status_code
-        if rc == 200:
-            site_status = 'Available'
     return msg, site_status, rc
 
 def main():
@@ -96,20 +93,11 @@ def main():
     tls = module.params["tls"]
 
     msg, site_status, rc = check_web_server(addr, tls)
-
-
-    if msg:
-        module.fail_json(changed=False,
-                         failed=True,
-                         site_status=site_status,
-                         rc=rc,
-                         msg=msg)
-    else:
-        module.exit_json(changed=False,
-                         failed=False,
-                         result_str=site_status,
-                         rc=rc,
-                         msg=msg)
+    module.exit_json(changed=False,
+                      failed=False,
+                      result_str=site_status,
+                      rc=rc,
+                      msg=msg)
 
 
 
