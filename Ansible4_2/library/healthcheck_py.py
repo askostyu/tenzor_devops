@@ -73,8 +73,12 @@ def check_web_server(addr, tls):
         msg = str(ex)
         site_status="Unavailable"
     else:
-        site_status="Available"
         rc = response.status_code
+        if rc == 404:
+          site_status = "Unavailable"
+          msg = "404 Not Found"
+        else:
+          site_status = "Available"
     return msg, site_status, rc
 
 def main():

@@ -2,7 +2,7 @@
 - name: Check site's availability
   hosts: nodes
   vars:
-    addr: "y1a.ru"
+    addr: "ya.ru/sdf"
     tls: false
   gather_facts: false
   tasks:
