@@ -26,4 +26,5 @@ sudo docker run -it --rm -p 80:8000 --name c2 -v dd_result:/result prometheus-de
 sudo docker ps --no-trunc
 sudo cgget /docker/fc0d95d401b685304f98075df9ff81a63c0657202baacee1afea6d079c3ba437 | grep blkio.throttle.write_iops_device
 sudo cgset -r blkio.throttle.write_iops_device="8:0 10000" /docker/fc0d95d401b685304f98075df9ff81a63c0657202baacee1afea6d079c3ba437
+sudo cgget /docker/fc0d95d401b685304f98075df9ff81a63c0657202baacee1afea6d079c3ba437 | grep blkio.throttle.write_iops_device
 ```
