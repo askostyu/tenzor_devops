@@ -5,6 +5,7 @@ services:
     image: grafana/grafana-oss
     volumes:
       - grafana-storage:/var/lib/grafana
+      - ./grafana/etc/grafana.ini:/etc/grafana/grafana.ini
     ports:
      - 3000:3000
   influxdb:
