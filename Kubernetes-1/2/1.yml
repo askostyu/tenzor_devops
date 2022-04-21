@@ -1,0 +1,21 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: myapp-deployment        # Имя деплоймента
+spec:
+  replicas: 3                   # Количество подов
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+      spec:
+        containers:
+        - name: myapp-container
+          image: myregistry.ru:5000/myimage:1.0
+          ports:
+          - containerPort: 80
+            protocol: "TCP"
+    
