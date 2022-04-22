@@ -1,0 +1,45 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podscount-deployment
+  labels:
+    app: podscount
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: podscount
+  template:
+    metadata:
+      labels:
+        app: podscount
+    spec:
+      serviceAccountName: job-robot
+      containers:
+      - name: podscount
+        image: python
+        command: ["/script/entrypoint.bash"]
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+          - name: podscount-script
+            mountPath: /script/
+      volumes:
+        - name: podscount-script
+          hostPath:
+            path: /home/ansible/tenzor_devops/Kubernetes-1/3/script/
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: podscount-service
+spec:
+  selector:
+    app: podscount
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+      nodePort: 30080
