@@ -15,11 +15,34 @@ spec:
         app: node-exporter
     spec:
       containers:
-      - name: node-exporter
+      - args:
+        - --path.sysfs=/host/sys
+        - --path.rootfs=/host/root
+        - --no-collector.wifi
+        - --no-collector.hwmon
+        - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/pods/.+)($|/)
+        - --collector.netclass.ignored-devices=^(veth.*)$
+        name: node-exporter
         image: prom/node-exporter
         ports:
         - containerPort: 9100
           protocol: "TCP"
+        volumeMounts:
+        - mountPath: /host/sys
+          mountPropagation: HostToContainer
+          name: sys
+          readOnly: true
+        - mountPath: /host/root
+          mountPropagation: HostToContainer
+          name: root
+          readOnly: true
+      volumes:
+      - hostPath:
+          path: /sys
+        name: sys
+      - hostPath:
+          path: /
+        name: root
 ---
 apiVersion: v1
 kind: Service

@@ -11,7 +11,7 @@ class CustomCollector():
         config.load_incluster_config()
         v1 = client.CoreV1Api()
         ret_pod = v1.list_namespaced_pod("default", watch=False)
-        value = GaugeMetricFamily("DD_RESULT", 'result of dd operation', labels='value')
+        value = GaugeMetricFamily("node_kuber_pods", 'running pods count', labels='value')
         value.add_metric(["pods_count"], len(ret_pod.items))
         yield value
 

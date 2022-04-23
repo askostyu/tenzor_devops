@@ -6,7 +6,7 @@
 kubectl apply -f node-exporter-depl.yml
 ```
 
-Проброс портов через kubectl
+Если не использовать service, то можно пробросить порт следующим образом
 ```
 kubectl port-forward deployment/node-exporter-depl 9200:9100
 ```
