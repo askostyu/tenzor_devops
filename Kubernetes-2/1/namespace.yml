@@ -1,0 +1,8 @@
+---
+# Namespace
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: mynamespace
+  labels:
+    name: mynamespace
