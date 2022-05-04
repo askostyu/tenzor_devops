@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-script-deployment
+  labels:
+    app: nginx-script
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-script
+  template:
+    metadata:
+      labels:
+        app: nginx-script
+    spec:
+      containers:
+      - image: kuber_2_2_script
+        imagePullPolicy: Never
+        name: script
+        env:
+        - name: MYSQL_USERNAME
+          value: root
+        - name: MYSQL_PASSWORD
+          value: password
+        - name: MYSQL_HOSTNAME
+          value: mysql.mynamespace
+        volumeMounts:
+        - name: index-folder
+          mountPath: /usr/share/nginx/html 
+      #- name: nginx
+      #  image: python
+      #  command: ["/script/entrypoint.bash"]
+      #  ports:
+      #  - containerPort: 8000
+      #  volumeMounts:
+      #    - name: podscount-script
+      #      mountPath: /script/
+      volumes:
+        - name: index-folder
+          emptyDir: {}
