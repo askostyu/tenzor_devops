@@ -19,13 +19,18 @@ env = Environment(loader=FileSystemLoader('templates'))
 template = env.get_template('index.j2')
 
 while True:
-    with mysql.connector.connect(**config) as connection:
-        cursor = connection.cursor()
-        cursor.execute(QUERY)
-        title, text = next(cursor)
+    try:
+        with mysql.connector.connect(**config) as connection:
+            cursor = connection.cursor()
+            cursor.execute(QUERY)
+            title, text = next(cursor)
+            data = {
+                'title': title,
+                'text': text
+            }
+    except Exception as ex:
         data = {
-            'title': title,
-            'text': text
+            'error': ex,
         }
     with open(INDEX_FILEPATH, "w") as f:
         f.write(template.render(data))

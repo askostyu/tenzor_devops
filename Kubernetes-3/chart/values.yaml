@@ -1,0 +1,12 @@
+# namespace is the namespace used for application
+namespace: mynamespace
+# mysqlImage is the MySQL docker image 
+mysqlImage: mysql:8.0.29
+# mysqlRootPassword is the root password for MySQL
+mysqlRootPassword: password 
+# scriptImage is the script docker image
+scriptImage: kuber_2_2_script
+# nginxImage is the Nginx docker image
+nginxImage: nginx:1.21.6-alpine
+# virtualHost is the virtual host for application
+virtualHost: webapp.local

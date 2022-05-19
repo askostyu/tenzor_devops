@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deployment
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+        - image: {{ .Values.scriptImage }}
+          imagePullPolicy: Never
+          name: script
+          env:
+            - name: MYSQL_USERNAME
+              value: root
+            - name: MYSQL_PASSWORD
+              valueFrom: 
+                secretKeyRef:
+                  name: mysql-secret
+                  key: ROOT_PASSWORD
+            - name: MYSQL_HOSTNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: webapp-configmap
+                  key: MYSQL_HOSTNAME
+          volumeMounts:
+            - name: index-folder
+              mountPath: /usr/share/nginx/html
+        - name: nginx
+          image: {{ .Values.nginxImage }}
+          ports:
+            - containerPort: 80
+              protocol: "TCP"
+          volumeMounts:
+            - name: index-folder
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: index-folder
+          emptyDir: {}
